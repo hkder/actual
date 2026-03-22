@@ -1,4 +1,5 @@
 export { BudgetPage as Budget } from '../mobile/budget/BudgetPage';
+export { MonthTransactionsPage as MonthTransactions } from '../budget/MonthTransactionsPage';
 
 export { AccountsPage as Accounts } from '../mobile/accounts/AccountsPage';
 export { AccountPage as Account } from '../mobile/accounts/AccountPage';
@@ -15,3 +16,6 @@ export { MobilePayeeEditPage as PayeeEdit } from '../mobile/payees/MobilePayeeEd
 
 export { MobileBankSyncPage as BankSync } from '../mobile/banksync/MobileBankSyncPage';
 export { MobileBankSyncAccountEditPage as BankSyncAccountEdit } from '../mobile/banksync/MobileBankSyncAccountEditPage';
+
+export { RecurringPage as Recurring } from '../recurring/RecurringPage';
+export { SpendingPage as Spending } from '../spending/SpendingPage';

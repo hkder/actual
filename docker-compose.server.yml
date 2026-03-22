@@ -1,0 +1,23 @@
+services:
+  actual-server:
+    build:
+      context: .
+      dockerfile: sync-server.Dockerfile
+    image: actual-server-local
+    ports:
+      - '100.101.157.90:5006:5006'
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - ACTUAL_HTTPS_KEY=/certs/tailscale.key
+      - ACTUAL_HTTPS_CERT=/certs/tailscale.crt
+      - ACTUAL_WEB_ROOT=/frontend
+    volumes:
+      - actual-data:/data
+      - /home/hkder/actual/tailscale.crt:/certs/tailscale.crt:ro
+      - /home/hkder/actual/tailscale.key:/certs/tailscale.key:ro
+      - /home/hkder/actual/packages/desktop-client/build:/frontend:ro
+    restart: always
+
+volumes:
+  actual-data:
+    driver: local

@@ -9,6 +9,7 @@ import rateLimit from 'express-rate-limit';
 import { bootstrap } from './account-db';
 import * as accountApp from './app-account';
 import * as adminApp from './app-admin';
+import * as aiApp from './app-ai';
 import * as corsApp from './app-cors-proxy';
 import * as goCardlessApp from './app-gocardless/app-gocardless';
 import * as openidApp from './app-openid';
@@ -60,6 +61,7 @@ app.use('/gocardless', goCardlessApp.handlers);
 app.use('/simplefin', simpleFinApp.handlers);
 app.use('/pluggyai', pluggai.handlers);
 app.use('/secret', secretApp.handlers);
+app.use('/ai', aiApp.handlers);
 
 if (config.get('corsProxy.enabled')) {
   app.use('/cors-proxy', corsApp.handlers);
@@ -147,6 +149,14 @@ if (process.env.NODE_ENV === 'development') {
   );
 } else {
   console.log('Running in production mode - Serving static React app');
+
+  // Required for SharedArrayBuffer (used by WebAssembly/SQLite in the frontend)
+  // Use require-corp (not credentialless) for Safari/iOS compatibility (iOS 15.2+)
+  app.use((_req, res, next) => {
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+    res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+    next();
+  });
 
   app.use(express.static(config.get('webRoot'), { index: false }));
   app.get('/{*splat}', (req, res) =>

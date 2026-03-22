@@ -8,6 +8,8 @@ import * as monthUtils from 'loot-core/shared/months';
 import { EditSyncAccount } from './banksync/EditSyncAccount';
 import { AccountAutocompleteModal } from './modals/AccountAutocompleteModal';
 import { AccountMenuModal } from './modals/AccountMenuModal';
+import { AiCategorizeReviewModal } from './modals/AiCategorizeReviewModal';
+import { AiConfigModal } from './modals/AiConfigModal';
 import { BudgetAutomationsModal } from './modals/BudgetAutomationsModal';
 import { BudgetPageMenuModal } from './modals/BudgetPageMenuModal';
 import { CategoryAutocompleteModal } from './modals/CategoryAutocompleteModal';
@@ -186,6 +188,12 @@ export function Modals() {
 
         case 'pluggyai-init':
           return <PluggyAiInitialiseModal key={key} {...modal.options} />;
+
+        case 'ai-config':
+          return <AiConfigModal key={key} {...modal.options} />;
+
+        case 'ai-categorize-review':
+          return <AiCategorizeReviewModal key={key} {...modal.options} />;
 
         case 'gocardless-external-msg':
           return (

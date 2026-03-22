@@ -741,6 +741,136 @@ class AccountInternal extends PureComponent<
     }
   };
 
+  onAiCategorize = async (ids: string[]) => {
+    const uncategorized = this.state.transactions.filter(
+      tx => ids.includes(tx.id) && !tx.category,
+    );
+
+    if (uncategorized.length === 0) {
+      this.props.dispatch(
+        addNotification({
+          notification: {
+            type: 'message',
+            message: 'All selected transactions already have a category.',
+          },
+        }),
+      );
+      return;
+    }
+
+    // Check if API key is configured (secret-check returns { error } on failure or a string on success)
+    const keyCheck = await send('secret-check', 'anthropic_api_key');
+    const keyMissing =
+      !keyCheck ||
+      (typeof keyCheck === 'object' && 'error' in keyCheck && keyCheck.error);
+    if (keyMissing) {
+      this.props.dispatch(
+        pushModal({
+          modal: {
+            name: 'ai-config',
+            options: {
+              onSuccess: () => {
+                void this.onAiCategorize(ids);
+              },
+            },
+          },
+        }),
+      );
+      return;
+    }
+
+    try {
+      this.setState({ workingHard: true });
+      const result = await send('ai-categorize-transactions', {
+        transactionIds: uncategorized.map(tx => tx.id),
+      });
+
+      if (result && 'error' in result && result.error === 'missing-api-key') {
+        this.props.dispatch(
+          pushModal({
+            modal: {
+              name: 'ai-config',
+              options: {
+                onSuccess: () => {
+                  void this.onAiCategorize(ids);
+                },
+              },
+            },
+          }),
+        );
+        return;
+      }
+
+      if (result && 'categorized' in result) {
+        this.fetchTransactions();
+
+        const costStr =
+          result.estimatedCostUsd != null
+            ? ` | cost: $${result.estimatedCostUsd.toFixed(4)}`
+            : '';
+        this.props.dispatch(
+          addNotification({
+            notification: {
+              type: result.categorized > 0 ? 'message' : 'warning',
+              message: `AI: ${result.categorized} categorized, ${result.skipped} skipped${costStr}`,
+            },
+          }),
+        );
+
+        // Build review list from ambiguous + skipped transactions
+        const reviewItems: Array<{
+          id: string;
+          payee: string;
+          amount: number;
+          notes: string;
+          reason: string;
+          type: 'ambiguous' | 'skipped';
+        }> = [];
+
+        if (result.ambiguous?.length) {
+          for (const a of result.ambiguous) {
+            reviewItems.push({
+              id: a.id,
+              payee: a.payee,
+              amount: a.amount,
+              notes: a.notes,
+              reason: a.reason,
+              type: 'ambiguous',
+            });
+          }
+        }
+
+        if (reviewItems.length > 0) {
+          this.props.dispatch(
+            pushModal({
+              modal: {
+                name: 'ai-categorize-review',
+                options: {
+                  transactions: reviewItems,
+                  onReviewed: () => {
+                    this.fetchTransactions();
+                  },
+                },
+              },
+            }),
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error in AI categorization:', error);
+      this.props.dispatch(
+        addNotification({
+          notification: {
+            type: 'error',
+            message: 'AI categorization failed. Check your API key.',
+          },
+        }),
+      );
+    } finally {
+      this.setState({ workingHard: false });
+    }
+  };
+
   onAddTransaction = () => {
     this.setState({ isAdding: true });
   };
@@ -1824,6 +1954,7 @@ class AccountInternal extends PureComponent<
                 onBatchDelete={this.onBatchDelete}
                 onBatchDuplicate={this.onBatchDuplicate}
                 onRunRules={this.onRunRules}
+                onAiCategorize={this.onAiCategorize}
                 onBatchEdit={this.onBatchEdit}
                 onBatchLinkSchedule={this.onBatchLinkSchedule}
                 onBatchUnlinkSchedule={this.onBatchUnlinkSchedule}

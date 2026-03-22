@@ -9,6 +9,7 @@ import { AnimatedLoading } from '@actual-app/components/icons/AnimatedLoading';
 import {
   SvgAdd,
   SvgDotsHorizontalTriple,
+  SvgFlashlight,
 } from '@actual-app/components/icons/v1';
 import {
   SvgArrowsExpand3,
@@ -102,6 +103,9 @@ type AccountHeaderProps = {
   onReconcile: ComponentProps<typeof ReconcileMenu>['onReconcile'];
   onBatchEdit: ComponentProps<typeof SelectedTransactionsButton>['onEdit'];
   onRunRules: ComponentProps<typeof SelectedTransactionsButton>['onRunRules'];
+  onAiCategorize: ComponentProps<
+    typeof SelectedTransactionsButton
+  >['onAiCategorize'];
   onBatchDelete: ComponentProps<typeof SelectedTransactionsButton>['onDelete'];
   onBatchDuplicate: ComponentProps<
     typeof SelectedTransactionsButton
@@ -185,6 +189,7 @@ export function AccountHeader({
   onScheduleAction,
   onSetTransfer,
   onRunRules,
+  onAiCategorize,
   onMakeAsSplitTransaction,
   onMakeAsNonSplitTransactions,
   onMergeTransactions,
@@ -369,6 +374,20 @@ export function AccountHeader({
               <Trans>Add New</Trans>
             </Button>
           )}
+
+          {accountId === 'uncategorized' && !showEmptyMessage && (
+            <Button
+              variant="bare"
+              onPress={() => onAiCategorize(transactions.map(t => t.id))}
+            >
+              <SvgFlashlight
+                width={12}
+                height={12}
+                style={{ marginRight: 4 }}
+              />
+              <Trans>AI Categorize</Trans>
+            </Button>
+          )}
           <View style={{ flexShrink: 0 }}>
             {/* @ts-expect-error fix me */}
             <FilterButton onApply={onApplyFilter} />
@@ -393,6 +412,7 @@ export function AccountHeader({
               onDelete={onBatchDelete}
               onEdit={onBatchEdit}
               onRunRules={onRunRules}
+              onAiCategorize={onAiCategorize}
               onLinkSchedule={onBatchLinkSchedule}
               onUnlinkSchedule={onBatchUnlinkSchedule}
               onCreateRule={onCreateRule}

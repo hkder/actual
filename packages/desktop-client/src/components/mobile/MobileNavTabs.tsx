@@ -7,6 +7,7 @@ import { animated, config, useSpring } from 'react-spring';
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
 import {
   SvgAdd,
+  SvgChartPie,
   SvgCog,
   SvgCreditCard,
   SvgPiggyBank,
@@ -104,6 +105,12 @@ export function MobileNavTabs() {
       path: '/transactions/new',
       style: navTabStyle,
       Icon: SvgAdd,
+    },
+    {
+      name: t('Spending'),
+      path: '/spending',
+      style: navTabStyle,
+      Icon: SvgChartPie,
     },
     {
       name: t('Accounts'),

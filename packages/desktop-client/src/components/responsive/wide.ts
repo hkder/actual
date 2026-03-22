@@ -1,4 +1,5 @@
 export { Budget } from '../budget';
+export { MonthTransactionsPage as MonthTransactions } from '../budget/MonthTransactionsPage';
 
 export { Schedules } from '../schedules';
 export { Schedules as ScheduleEdit } from '../schedules';
@@ -14,6 +15,9 @@ export { ManagePayeesPage as Payees } from '../payees/ManagePayeesPage';
 export { ManagePayeesPage as PayeeEdit } from '../payees/ManagePayeesPage';
 
 export { BankSync } from '../banksync';
+
+export { RecurringPage as Recurring } from '../recurring/RecurringPage';
+export { SpendingPage as Spending } from '../spending/SpendingPage';
 
 export { UserDirectoryPage } from '../admin/UserDirectory/UserDirectoryPage';
 

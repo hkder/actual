@@ -52,9 +52,18 @@ app.post('/', async (req, res) => {
 
 app.get('/:name', async (req, res) => {
   const name = req.params.name;
-  const keyExists = secretsService.exists(name);
-  if (keyExists) {
-    res.sendStatus(204);
+
+  // Check process env first (e.g. ANTHROPIC_API_KEY env var)
+  const envVarMap = { anthropic_api_key: 'ANTHROPIC_API_KEY' };
+  const envVar = envVarMap[name];
+  const envValue = envVar ? process.env[envVar] : null;
+
+  const dbValue = secretsService.get(name);
+  const value = dbValue || envValue;
+
+  res.set('Cache-Control', 'no-store');
+  if (value) {
+    res.status(200).json({ value });
   } else {
     res.status(404).send('key not found');
   }

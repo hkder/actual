@@ -17,6 +17,7 @@ import { BudgetName } from './BudgetName';
 import { PrimaryButtons } from './PrimaryButtons';
 import { SecondaryButtons } from './SecondaryButtons';
 import { useSidebar } from './SidebarProvider';
+import { SyncAISection } from './SyncAISection';
 import { ToggleButton } from './ToggleButton';
 
 import { useGlobalPref } from '@desktop-client/hooks/useGlobalPref';
@@ -130,6 +131,8 @@ export function Sidebar() {
             ]}
           />
         </View>
+
+        <SyncAISection />
       </View>
     </Resizable>
   );

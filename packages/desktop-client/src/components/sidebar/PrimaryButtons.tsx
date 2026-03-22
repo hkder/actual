@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
 
 import {
+  SvgChartPie,
   SvgCheveronDown,
   SvgCheveronRight,
   SvgCog,
   SvgCreditCard,
+  SvgRefresh,
   SvgReports,
   SvgStoreFront,
   SvgTag,
@@ -51,6 +53,8 @@ export function PrimaryButtons() {
       <Item title={t('Budget')} Icon={SvgWallet} to="/budget" />
       <Item title={t('Reports')} Icon={SvgReports} to="/reports" />
       <Item title={t('Schedules')} Icon={SvgCalendar3} to="/schedules" />
+      <Item title={t('Recurring')} Icon={SvgRefresh} to="/recurring" />
+      <Item title={t('Spending')} Icon={SvgChartPie} to="/spending" />
       <Item
         title={t('More')}
         Icon={isOpen ? SvgCheveronDown : SvgCheveronRight}

@@ -35,6 +35,7 @@ import { getServer } from '../server-config';
 import { batchMessages } from '../sync';
 import { undoable, withUndo } from '../undo';
 
+import { claudeCategorizeTransactions } from './claude';
 import * as link from './link';
 import { getStartingBalancePayee } from './payees';
 import * as bankSync from './sync';
@@ -74,6 +75,9 @@ export type AccountHandlers = {
   'simplefin-batch-sync': typeof simpleFinBatchSync;
   'transactions-import': typeof importTransactions;
   'account-unlink': typeof unlinkAccount;
+  'claude-categorize-transactions': typeof claudeCategorizeTransactionsHandler;
+  'claude-api-key-set': typeof setClaudeApiKey;
+  'claude-api-key-get': typeof getClaudeApiKey;
 };
 
 async function updateAccount({
@@ -1265,6 +1269,24 @@ async function unlinkAccount({ id }: { id: AccountEntity['id'] }) {
   return 'ok';
 }
 
+async function setClaudeApiKey({ key }: { key: string }) {
+  await asyncStorage.setItem('claude-api-key', key);
+  return 'ok';
+}
+
+async function getClaudeApiKey() {
+  const key = await asyncStorage.getItem('claude-api-key');
+  return { key: key ?? null };
+}
+
+async function claudeCategorizeTransactionsHandler() {
+  const apiKey = await asyncStorage.getItem('claude-api-key');
+  if (!apiKey) {
+    return { error: 'no-api-key' };
+  }
+  return claudeCategorizeTransactions(apiKey);
+}
+
 export const app = createApp<AccountHandlers>();
 
 app.method('account-update', mutator(undoable(updateAccount)));
@@ -1293,3 +1315,9 @@ app.method('accounts-bank-sync', accountsBankSync);
 app.method('simplefin-batch-sync', simpleFinBatchSync);
 app.method('transactions-import', mutator(undoable(importTransactions)));
 app.method('account-unlink', mutator(unlinkAccount));
+app.method('claude-api-key-set', setClaudeApiKey);
+app.method('claude-api-key-get', getClaudeApiKey);
+app.method(
+  'claude-categorize-transactions',
+  claudeCategorizeTransactionsHandler,
+);

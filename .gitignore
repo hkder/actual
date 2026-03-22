@@ -88,3 +88,18 @@ storybook-static
 .actualrc.yaml
 .actualrc.yml
 actual.config.js
+
+# TLS certificates and private keys
+tailscale.key
+tailscale.crt
+*.pem
+*.key
+*.crt
+
+# Local environment secrets
+.actual.env
+.splitwise.env
+
+# Build stats / artifacts
+app/
+build-stats/

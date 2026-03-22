@@ -120,6 +120,12 @@ export type Modal =
       };
     }
   | {
+      name: 'ai-config';
+      options: {
+        onSuccess: () => void;
+      };
+    }
+  | {
       name: 'gocardless-external-msg';
       options: {
         onMoveExternal: (arg: {
@@ -607,6 +613,20 @@ export type Modal =
       options: {
         categoryId: CategoryEntity['id'];
         templates: Template[];
+      };
+    }
+  | {
+      name: 'ai-categorize-review';
+      options: {
+        transactions: Array<{
+          id: string;
+          payee: string;
+          amount: number;
+          notes: string;
+          reason: string;
+          type: 'ambiguous' | 'skipped';
+        }>;
+        onReviewed: () => void;
       };
     };
 

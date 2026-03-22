@@ -263,6 +263,11 @@ export function FinancesApp() {
                 />
 
                 <Route
+                  path="/budget/:month/transactions"
+                  element={<NarrowAlternate name="MonthTransactions" />}
+                />
+
+                <Route
                   path="/schedules"
                   element={<NarrowAlternate name="Schedules" />}
                 />
@@ -308,6 +313,15 @@ export function FinancesApp() {
                   }
                 />
                 <Route path="/tags" element={<ManageTagsPage />} />
+
+                <Route
+                  path="/recurring"
+                  element={<NarrowAlternate name="Recurring" />}
+                />
+                <Route
+                  path="/spending"
+                  element={<NarrowAlternate name="Spending" />}
+                />
                 <Route path="/settings" element={<Settings />} />
 
                 <Route
